@@ -3,14 +3,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/main.py",
+      "src": "src/compass-server/main.py",
       "use": "@vercel/python"
     }
   ],
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/src/main.py"
+      "destination": "/src/compass-server/main.py"
     }
   ]
 }
