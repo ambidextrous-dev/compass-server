@@ -10,7 +10,7 @@ from fastapi import Body, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from shapely.geometry import LineString
 
-from config import get_settings
+from .config import get_settings
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s %(message)s",
@@ -26,7 +26,8 @@ storage_dir.mkdir(exist_ok=True)
 app = FastAPI(
     title="Compass Server",
     description="A Python reimplementation of Compass service",
-    version="0.1.0"
+    version="0.1.0",
+    root_path="/api"
 )
 
 app.add_middleware(
@@ -41,12 +42,12 @@ app.add_middleware(
 async def ping():
     return {"message": "pong"}
 
-@app.post("/api/input")
+@app.post("/input")
 async def receive_input(
     payload: dict = Body(...),
     authorization: str = Header(...),
 ):
-    logger.info("Received /api/input call")
+    logger.info("Received /input call")
     logger.debug("Raw payload: %s", payload)
 
     # Extract Bearer token
@@ -117,7 +118,7 @@ async def receive_input(
     return {"result": "ok"}
 
 
-@app.get("/api/query")
+@app.get("/query")
 async def query_data(
     token: str = Query(...),
     date: str = Query(..., description="YYYY-MM-DD"),
@@ -164,7 +165,7 @@ async def query_data(
     }
 
 
-@app.get("/api/last")
+@app.get("/last")
 async def get_last(token: str = Query(...)):
     # 1. Validate token
     if token != settings.read_token:
@@ -186,7 +187,8 @@ async def get_last(token: str = Query(...)):
 
     return latest_feature
 
-@app.get("/api/find-from-localtime")
+
+@app.get("/find-from-localtime")
 async def find_from_local(
     token: str = Query(...),
     datetime_str: str = Query(..., description="YYYY-MM-DDTHH:MM:SS"),
@@ -215,3 +217,4 @@ async def find_from_local(
                 results.append(feat)
 
     return {"type": "FeatureCollection", "features": results}
+

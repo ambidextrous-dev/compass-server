@@ -1,3 +1,9 @@
 .idea/
 
 data/
+.vercel
+.env*.local
+
+__pycache__/
+
+.venv/
